@@ -15,8 +15,10 @@ const themeLabel = themeToggle.querySelector('.theme-label');
 const filterButtons = document.querySelectorAll('.filter-button');
 const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 const THEME_STORAGE_KEY = 'workshop-theme';
+const FILTER_STORAGE_KEY = 'workshop-filter';
+const VALID_FILTERS = ['all', 'active', 'completed'];
 
-let currentFilter = 'all';
+let currentFilter = loadFilter();
 
 // 所有待辦事項都放在這個陣列裡
 // 每一筆的格式:{ id: '169...', text: '買牛奶', completed: false }
@@ -71,6 +73,26 @@ function loadTodos() {
 /** 把目前的待辦清單寫回 localStorage */
 function saveTodos() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+}
+
+/** 從 localStorage 讀取篩選條件,無效值就回到全部 */
+function loadFilter() {
+  const savedFilter = localStorage.getItem(FILTER_STORAGE_KEY);
+  return VALID_FILTERS.includes(savedFilter) ? savedFilter : 'all';
+}
+
+/** 把目前的篩選條件寫回 localStorage */
+function saveFilter() {
+  localStorage.setItem(FILTER_STORAGE_KEY, currentFilter);
+}
+
+/** 更新篩選按鈕的選中狀態 */
+function updateFilterButtons() {
+  filterButtons.forEach((filterButton) => {
+    const isActive = filterButton.dataset.filter === currentFilter;
+    filterButton.classList.toggle('active', isActive);
+    filterButton.setAttribute('aria-pressed', String(isActive));
+  });
 }
 
 // ---------- 畫面繪製 ----------
@@ -192,14 +214,12 @@ list.addEventListener('click', (event) => {
 filterButtons.forEach((button) => {
   button.addEventListener('click', () => {
     currentFilter = button.dataset.filter;
-    filterButtons.forEach((filterButton) => {
-      const isActive = filterButton === button;
-      filterButton.classList.toggle('active', isActive);
-      filterButton.setAttribute('aria-pressed', String(isActive));
-    });
+    saveFilter();
+    updateFilterButtons();
     render();
   });
 });
 
 // 頁面載入時先畫一次
+updateFilterButtons();
 render();
