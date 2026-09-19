@@ -8,7 +8,13 @@
 </head>
 <body>
   <main class="app">
-    <h1>我的待辦清單</h1>
+    <header class="app-header">
+      <h1>我的待辦清單</h1>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">
+        <span class="theme-icon" aria-hidden="true">🌙</span>
+        <span class="theme-label">深色模式</span>
+      </button>
+    </header>
 
     <!-- 新增待辦的表單 -->
     <form id="todo-form" class="todo-form" autocomplete="off">
@@ -23,6 +29,13 @@
       >
       <button type="submit" class="btn-add">新增</button>
     </form>
+
+    <!-- 篩選待辦事項 -->
+    <nav class="filter-bar" aria-label="待辦事項篩選">
+      <button class="filter-button active" type="button" data-filter="all" aria-pressed="true">全部</button>
+      <button class="filter-button" type="button" data-filter="active" aria-pressed="false">未完成</button>
+      <button class="filter-button" type="button" data-filter="completed" aria-pressed="false">已完成</button>
+    </nav>
 
     <!-- 待辦清單本體,內容由 app.js 動態產生 -->
     <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
